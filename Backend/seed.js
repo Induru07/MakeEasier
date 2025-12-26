@@ -85,3 +85,18 @@ const seedData = async () => {
 };
 
 seedData();
+
+
+// Connect to DB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB...');
+    // ONLY run the seed function AFTER the connection succeeds
+    seedData();
+  })
+  .catch(err => {
+    console.error('❌ Connection Error:', err);
+    process.exit(1);
+  });
+
+// Remove the standalone seedData(); call at the bottom if it exists!

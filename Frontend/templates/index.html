@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Salon Assistant - Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="website-layout">
+        <header class="hero">
+            <h1>The Royal Salon</h1>
+            <p>Experience Elegance (Scroll down to test the bot)</p>
+        </header>
+
+        <div class="content-grid">
+            <div class="box" style="background: #ffadad;">1. Services</div>
+            <div class="box" style="background: #ffd6a5;">2. Gallery</div>
+            <div class="box" style="background: #fdffb6;">3. Pricing</div>
+            <div class="box" style="background: #caffbf;">4. Testimonials</div>
+            <div class="box" style="background: #9bf6ff;">5. Contact Us</div>
+            <div class="box" style="background: #a0c4ff;">6. Location</div>
+        </div>
+        
+        <footer class="footer">
+            <p>&copy; 2025 Salon Layout Prototype</p>
+        </footer>
+    </div>
+
+    <div id="princess-container" onclick="toggleChat()" title="Click to Chat">
+        <img src="{{ url_for('static', filename='princess.png') }}" alt="Princess" class="princess-img">
+        
+        <div class="eye-socket left-eye"><div class="pupil"></div></div>
+        <div class="eye-socket right-eye"><div class="pupil"></div></div>
+    </div>
+
+    <div id="chat-window">
+        <div class="chat-header">
+            <span>👑 VIP Concierge</span>
+            <button onclick="toggleChat()" style="background:none; border:none; color:white; cursor:pointer;">✖</button>
+        </div>
+        
+        <div id="messages">
+            <div class="msg bot">Greetings! How may I assist with your booking today?</div>
+        </div>
+
+        <div id="confirm-card">
+            <p>Shall I book this appointment?</p>
+            <button class="confirm-btn" onclick="finalizeBooking()">Confirm Booking</button>
+        </div>
+
+        <div class="input-area">
+            <button id="mic-btn" onclick="toggleVoice()">🎙</button>
+            <input type="text" id="userInput" placeholder="Type or speak...">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
