@@ -1,5 +1,8 @@
+
 const Booking = require('../models/Booking');
 const Service = require('../models/Service');
+
+
 
 //LOGIC: Check availability and create booking
 exports.createBooking = async (req, res) => {
