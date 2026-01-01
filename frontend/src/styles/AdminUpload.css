@@ -1,0 +1,13 @@
+.admin-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.upload-form { display: flex; flex-direction: column; gap: 15px; }
+.upload-form label { font-weight: bold; font-size: 0.9rem; color: #333; }
+.upload-form input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+.upload-btn { background-color: #ff4500; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.status-msg { background-color: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }

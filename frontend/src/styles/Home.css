@@ -1,0 +1,21 @@
+.home-container {
+  min-height: 100vh;
+  background-color: #f8f9fa; /* Light grey background */
+}
+
+.hero-section {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.highlight {
+  color: #ff4500;
+}
+
+.style-grid {
+  display: flex; /* Aligns cards in a row */
+  flex-wrap: wrap; /* Allows cards to wrap to next line on small screens */
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
