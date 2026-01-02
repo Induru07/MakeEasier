@@ -1,0 +1,177 @@
+/* --- 1. GENERAL PAGE STYLES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* --- 2. WEBSITE LAYOUT (SALON CONTENT) --- */
+.hero {
+    background: linear-gradient(135deg, #6200ee, #9b67ff);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.box {
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.box:hover {
+    transform: translateY(-10px);
+}
+
+.footer {
+    text-align: center;
+    padding: 40px;
+    background: #333;
+    color: white;
+    margin-top: 40px;
+}
+
+/* --- 3. ICON IN BOTTOM RIGHT --- */
+#princess-container {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    width: 65px;
+    height: 65px;
+    cursor: pointer;
+    z-index: 2000;
+    transition: transform 0.2s;
+}
+
+#princess-container:hover {
+    transform: scale(1.1);
+}
+
+.princess-img {
+    width: 100%;
+    height: 130%; /* Kept your specific height override */
+    object-fit: cover;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+}
+
+/* --- 4. FLOATING CHAT WINDOW --- */
+#chat-window {
+    position: fixed;
+    bottom: 95px; /* Sits exactly above the icon */
+    right: 20px;
+    width: 330px;
+    height: 480px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    display: none; /* Controlled by toggleChat() in script.js */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1999;
+    border: 1px solid #ddd;
+}
+
+/* Header & Minimize Button */
+.chat-header {
+    background: #6200ee;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.min-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 22px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Messages Area */
+#messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fdfdfd;
+}
+
+.msg { 
+    padding: 10px 14px; 
+    border-radius: 12px; 
+    font-size: 14px; 
+    max-width: 85%; 
+}
+
+.bot { 
+    background: #f0f0f0; 
+    align-self: flex-start; 
+    color: #333; 
+}
+
+.user { 
+    background: #6200ee; 
+    color: white; 
+    align-self: flex-end; 
+}
+
+/* Input Footer */
+.input-area { 
+    padding: 12px; 
+    display: flex; 
+    gap: 8px; 
+    border-top: 1px solid #eee; 
+}
+
+#userInput { 
+    flex: 1; 
+    padding: 10px; 
+    border: 1px solid #ddd; 
+    border-radius: 6px; 
+}
+
+#send-btn { 
+    background: #6200ee; 
+    color: white; 
+    border: none; 
+    padding: 0 15px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+}
+
+#send-btn:hover {
+    background: #3700b3;
+}

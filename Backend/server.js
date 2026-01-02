@@ -1,9 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path'); // Added for file paths
 const connectDB = require('./config/db');
 
-//Routes
+// Routes
 const bookingRoutes = require('./routes/bookingRoutes');
 
 // Load env vars
@@ -14,19 +15,24 @@ connectDB();
 
 const app = express();
 
-// Middleware (Allows us to accept JSON data)
+// Middleware
 app.use(express.json());
 app.use(cors());
 
+// --- ADDED THIS SECTION TO SERVE YOUR FRONTEND ---
+// --- UPDATED SECTION FOR SERVER.JS ---
+
+// Go UP one level from Backend, then INTO Frontend/static
+app.use('/static', express.static(path.join(__dirname, '..', 'Frontend', 'static')));
+
+// Go UP one level from Backend, then INTO Frontend/templates
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'Frontend', 'templates', 'index.html'));
+});
+// ------------------------------------------------
 
 // Use Routes
 app.use('/api/bookings', bookingRoutes);
-
-
-// Test Route to check if server is working
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
 
 // Start Server
 const PORT = process.env.PORT || 5000;

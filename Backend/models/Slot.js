@@ -12,7 +12,7 @@ const slotSchema = new mongoose.Schema({
         required: true,
     },
     date: {
-        type: string, // e.g., "2024-07-15"
+        type: String, // e.g., "2024-07-15"
         required: true,
     },
     time: {
