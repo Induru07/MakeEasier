@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Barber Pro - Smart Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>✂️</text></svg>">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root { 
+            --primary: #2c3e50; --accent: #0984e3; --success: #27ae60; 
+            --danger: #e74c3c; --dark-card: #2c2c2e; 
+        }
+
+        /* --- LAYOUT RESET: Fits everything to the window --- */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; background: #f0f2f5; 
+            margin: 0; display: flex; height: 100vh; overflow: hidden; 
+        }
+
+        /* --- SIDEBAR: Fixed pattern on the left --- */
+        .sidebar { 
+            width: 200px; background-color: var(--primary); color: white; 
+            height: 100vh; padding: 20px; flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2334495e' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .tab-link { display: block; padding: 10px; color: #bdc3c7; cursor: pointer; border-radius: 5px; margin-bottom: 5px; font-size: 0.9rem; text-decoration: none; }
+        .tab-link:hover, .tab-link.active { background: #34495e; color: white; border-left: 4px solid var(--accent); }
+
+        /* --- MAIN AREA: Content area to the right --- */
+        .main { flex-grow: 1; padding: 20px; display: flex; flex-direction: column; gap: 15px; width: calc(100% - 200px); }
+        .hidden { display: none !important; }
+
+        /* --- GLOBAL WIDGETS: Dashboard Header --- */
+        .widget-row { display: flex; gap: 15px; height: 150px; flex-shrink: 0; }
+        .clock-widget { 
+            background: white; border: 4px dashed #e0e0e0; border-radius: 20px;
+            font-size: 3.5rem; font-weight: bold; width: 220px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .calendar-widget { 
+            background: var(--dark-card); color: white; border-radius: 20px; 
+            width: 180px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; 
+        }
+        .cal-header { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; }
+        .cal-day-num { font-size: 4rem; text-align: center; margin: 0; line-height: 1; }
+        .stat-card { 
+            flex-grow: 1; background: white; border-radius: 20px; display: flex; 
+            align-items: center; justify-content: space-around; padding: 10px;
+        }
+
+        /* --- CONTENT CARDS & TABLES --- */
+        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: auto; }
+        h3 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        .style-img { width: 40px; height: 40px; border-radius: 5px; object-fit: cover; background: #eee; }
+
+        /* --- BUTTONS --- */
+        .order-btn { border: 1px solid #767676; border-radius: 4px; padding: 4px 12px; cursor: pointer; transition: 0.2s; }
+        .order-btn:hover { background-color: #f0f0f0; }
+
+        /* --- ALARM STATE --- */
+        @keyframes flash { 0% { background: white; } 50% { background: #ffeded; } 100% { background: white; } }
+        .alarm-active { animation: flash 0.5s infinite; border: 2px solid var(--danger); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2 style="font-size: 1.2rem; margin-bottom: 20px;">✂️ SMART<br>SALOON</h2>
+    <div class="tab-link active" id="b1" onclick="showTab('dayView', 'b1')">📅 Today's Live</div>
+    <div class="tab-link" id="b2" onclick="showTab('catalogView', 'b2')">✂️ Service Menu</div>
+    <div class="tab-link" id="b3" onclick="showTab('staffView', 'b3')">👥 Staff Performance</div>
+    <div class="tab-link" id="b4" onclick="showTab('todoView', 'b4')">📦 Inventory Task</div>
+    <div class="tab-link" id="b5" onclick="showTab('historyView', 'b5')">📜 Past History</div>
+    <div class="tab-link" onclick="window.location.href='login.html'" style="color:var(--danger); margin-top:40px;">🔒 Logout</div>
+</div>
+
+<div class="main">
+    <div class="widget-row">
+        <div class="clock-widget" id="liveClock">00:00</div>
+        <div class="calendar-widget">
+            <div class="cal-header"><span style="color:#ff453a" id="calDay">SUN</span> <span style="color:#8e8e93" id="calMon">DEC</span></div>
+            <h1 class="cal-day-num" id="calDate">28</h1>
+            <div style="font-size: 0.7rem; text-align: center; color: #8e8e93;">100% System Rating</div>
+        </div>
+        <div class="stat-card">
+            <div style="text-align:center"><h4>Total Revenue</h4><span id="statRev" style="font-size:1.8rem; font-weight:bold; color:var(--success);">$0.00</span></div>
+            <button onclick="triggerAlarm()" style="background:var(--danger); color:white; border:none; padding:12px 25px; border-radius:10px; cursor:pointer; font-weight:bold;">🚨 TEST ALARM</button>
+        </div>
+    </div>
+
+    <div id="dayView" class="card">
+        <h3>⚡ Live Appointments (Chatbot Feed)</h3>
+        <table>
+            <thead><tr><th>Client</th><th>Barber</th><th>Service</th><th>Time</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="liveTable">
+                <tr id="row1">
+                    <td>Akash</td><td>Sam (Senior)</td><td>Female Layer Cut</td><td>02:30 PM</td><td>In Chair</td>
+                    <td><button onclick="payBooking('row1', 'Akash', 'Sam', 'Female Layer Cut', 45)" style="background:var(--success); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Paid</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="catalogView" class="hidden">
+        <div class="card">
+            <h3>✂️ Manual Service Catalog</h3>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="text" id="catName" placeholder="Style Name" style="flex:2">
+                <input type="url" id="catPhoto" placeholder="Photo URL" style="flex:2">
+                <input type="number" id="catPrice" placeholder="Price $" style="flex:1">
+                <button onclick="addToCatalog()" style="background:var(--accent); color:white; border:none; padding: 10px 30px; border-radius:5px;">Add Style</button>
+            </div>
+            <table id="catalogTable">
+                <thead><tr><th>Photo</th><th>Style</th><th>Price</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="staffView" class="hidden">
+        <div class="card">
+            <h3>👥 Staff Performance & Commission</h3>
+            <table>
+                <thead><tr><th>Barber</th><th>Level</th><th>Today's Cuts</th><th>Salary (40%)</th></tr></thead>
+                <tbody>
+                    <tr><td>Sam</td><td>Senior</td><td>1</td><td id="salSam">$0.00</td></tr>
+                    <tr><td>Julie</td><td>Junior</td><td>0</td><td>$0.00</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="todoView" class="hidden">
+        <div class="card">
+            <h3>📦 Inventory & Ordering (100% Quality Goal)</h3>
+            <table>
+                <thead><tr><th>Item</th><th>Stock</th><th>Order Date</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td>Hair Spray</td><td>10%</td><td>29 Dec</td><td><button class="order-btn" onclick="processOrder(this, 'Hair Spray')">Order Now</button></td></tr>
+                    <tr><td>Shampoo</td><td>80%</td><td>--</td><td><button class="order-btn" onclick="processOrder(this, 'Shampoo')">Order Now</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="historyView" class="hidden">
+        <div class="card">
+            <h3>📜 Completed Transaction Records</h3>
+            <table id="historyTable">
+                <thead><tr><th>Time</th><th>Client</th><th>Barber</th><th>Service</th><th>Total</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="paymentModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; display:flex; align-items:center; justify-content:center;">
+    <div class="card" style="width:350px; text-align:center; padding:30px; border-radius: 20px;">
+        <h2 style="margin-top:0;">Scan to Pay</h2>
+        <div id="qrcode" style="display:flex; justify-content:center; margin:20px 0;"></div>
+        <p id="qrAmount" style="font-size:1.5rem; font-weight:bold; color:var(--success);"></p>
+        <p style="font-size:0.8rem; color:#666;">Supports LankaPay & PayPal</p>
+        <button onclick="closePayment()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold;">Payment Received ✓</button>
+    </div>
+</div>
+
+<script>
+    let globalRev = 0;
+    let samEarnings = 0;
+    let qrHandler = null;
+
+    /** WIDGET LOGIC **/
+    function updateWidgets() {
+        const now = new Date();
+        document.getElementById('liveClock').innerText = now.getHours() + ":" + String(now.getMinutes()).padStart(2, '0');
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+        document.getElementById('calDay').innerText = days[now.getDay()];
+        document.getElementById('calMon').innerText = months[now.getMonth()];
+        document.getElementById('calDate').innerText = now.getDate();
+    }
+    setInterval(updateWidgets, 1000); updateWidgets();
+
+    /** TAB LOGIC **/
+    function showTab(tabId, btnId) {
+        document.getElementById('dayView').classList.add('hidden');
+        document.getElementById('catalogView').classList.add('hidden');
+        document.getElementById('staffView').classList.add('hidden');
+        document.getElementById('todoView').classList.add('hidden');
+        document.getElementById('historyView').classList.add('hidden');
+        document.getElementById(tabId).classList.remove('hidden');
+        document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(btnId).classList.add('active');
+    }
+
+    /** PAYMENT & QR LOGIC **/
+    function payBooking(rowId, client, barber, service, price) {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('hidden');
+        document.getElementById('qrAmount').innerText = "Total: $" + price;
+
+        const paymentData = `https://www.paypal.com/paypalme/YourSalon/${price}`; 
+        document.getElementById('qrcode').innerHTML = ""; 
+        qrHandler = new QRCode(document.getElementById("qrcode"), {
+            text: paymentData, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
+        });
+        modal.setAttribute('data-pending', JSON.stringify({rowId, client, barber, service, price}));
+    }
+
+    function closePayment() {
+        const modal = document.getElementById('paymentModal');
+        const data = JSON.parse(modal.getAttribute('data-pending'));
+        globalRev += data.price;
+        document.getElementById('statRev').innerText = "$" + globalRev.toFixed(2);
+
+        if(data.barber.includes('Sam')) {
+            samEarnings += (data.price * 0.4);
+            document.getElementById('salSam').innerText = "$" + samEarnings.toFixed(2);
+        }
+
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const hTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+        const row = hTable.insertRow(0);
+        row.innerHTML = `<td>${time}</td><td>${data.client}</td><td>${data.barber}</td><td>${data.service}</td><td>$${data.price}</td>`;
+
+        document.getElementById(data.rowId).remove();
+        modal.classList.add('hidden');
+    }
+
+    /** INVENTORY LOGIC **/
+    function processOrder(btn, itemName) {
+        if(confirm(`Place order for ${itemName}?`)) {
+            btn.innerText = "Ordered ✓";
+            btn.style.background = "var(--success)";
+            btn.style.color = "white";
+            btn.disabled = true;
+            btn.closest('tr').cells[1].style.color = "var(--success)";
+        }
+    }
+
+    /** CATALOG LOGIC **/
+    function addToCatalog() {
+        const name = document.getElementById('catName').value;
+        const price = document.getElementById('catPrice').value;
+        const photo = document.getElementById('catPhoto').value || 'https://via.placeholder.com/40';
+        if(!name || !price) return;
+
+        const table = document.getElementById('catalogTable').getElementsByTagName('tbody')[0];
+        const row = table.insertRow();
+        row.innerHTML = `<td><img src="${photo}" class="style-img"></td><td>${name}</td><td>$${price}</td><td><button onclick="this.closest('tr').remove()">Del</button></td>`;
+        document.getElementById('catName').value = ''; document.getElementById('catPrice').value = ''; document.getElementById('catPhoto').value = '';
+    }
+
+    /** ALARM LOGIC **/
+    function triggerAlarm() {
+        const container = document.getElementById('dayView');
+        container.classList.add('alarm-active');
+        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audio.createOscillator();
+        osc.connect(audio.destination); osc.start(); osc.stop(audio.currentTime + 0.3);
+        setTimeout(() => container.classList.remove('alarm-active'), 4000);
+    }
+</script>
+</body>
+</html>
