@@ -27,7 +27,7 @@ app.use('/static', express.static(path.join(__dirname, '..', 'Frontend', 'static
 
 // Go UP one level from Backend, then INTO Frontend/templates
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'Frontend', 'templates', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 // ------------------------------------------------
 
