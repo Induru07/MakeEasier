@@ -64,6 +64,68 @@ function appendMessage(text, sender) {
 }
 
 // Allow user to press "Enter" instead of clicking Send
-document.getElementById('userInput').addEventListener("keypress", (e) => {
+const userInput = document.getElementById('userInput');
+userInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
+});
+
+// Auto-expand textarea to fit content (max 3 rows)
+userInput.addEventListener('input', () => {
+    userInput.style.height = 'auto'; // Reset height to recalculate
+    userInput.style.height = Math.min(userInput.scrollHeight, 72) + 'px'; // ~3 rows = 72px
+});
+
+/* --- VOICE RECOGNITION LOGIC --- */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false; // Stops automatically when you finish a sentence
+    recognition.lang = 'en-US';
+
+    function startVoiceTyping() {
+        const micBtn = document.getElementById('mic-btn');
+        micBtn.classList.add('listening'); // Add listening class for animation
+        recognition.start();
+    }
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('userInput').value = transcript;
+        
+        // Optional: Automatically send the message after speaking
+        // sendMessage(); 
+    };
+
+    recognition.onend = () => {
+        document.getElementById('mic-btn').classList.remove('listening'); // Remove listening animation
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Speech Error: ", event.error);
+        document.getElementById('mic-btn').classList.remove('listening'); // Remove listening animation on error
+    };
+} else {
+    console.log("Speech Recognition not supported in this browser.");
+    document.getElementById('mic-btn').style.display = 'none';
+}
+
+const tx = document.getElementById('userInput');
+
+tx.addEventListener("input", function() {
+    // Reset height to calculate correctly
+    this.style.height = 'auto'; 
+    
+    // Set new height based on scrollHeight
+    // The 'Math.min' ensures it doesn't grow forever
+    this.style.height = (this.scrollHeight) + 'px';
+});
+
+// Update your existing Enter key listener to handle the textarea
+tx.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { // Shift+Enter allows new lines
+        e.preventDefault();
+        sendMessage();
+        tx.style.height = 'auto'; // Reset height after sending
+    }
 });

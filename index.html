@@ -37,7 +37,9 @@
         </div>
 
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Type a message...">
+            <textarea id="userInput" placeholder="Type a message..." rows="1"></textarea>
+            
+            <button id="mic-btn" onclick="startVoiceTyping()" title="Voice Typing">🎤</button>
             <button id="send-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>

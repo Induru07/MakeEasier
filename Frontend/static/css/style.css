@@ -161,15 +161,26 @@ body {
     padding: 10px; 
     border: 1px solid #ddd; 
     border-radius: 6px; 
+    resize: none; 
+    overflow-y: auto; 
+    max-height: 72px; 
+    line-height: 1.4; 
 }
 
 #send-btn { 
     background: #6200ee; 
     color: white; 
     border: none; 
-    padding: 0 15px; 
+    padding: 10px; 
     border-radius: 6px; 
     cursor: pointer; 
+    width: 60px; 
+    height: 40px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.1rem; 
+    flex-shrink: 0; 
 }
 
 #send-btn:hover {
@@ -188,4 +199,73 @@ body {
     0% { opacity: 0.5; }
     50% { opacity: 1; }
     100% { opacity: 0.5; }
+}
+
+#mic-btn {
+    background: #2196F3;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    color: white;
+}
+
+#mic-btn:hover {
+    transform: scale(1.1);
+}
+
+#mic-btn.listening {
+    background: #f44336;
+    animation: wobble-zoom-fade 0.8s infinite;
+}
+
+@keyframes wobble-zoom-fade {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    25% {
+        transform: scale(1.1) rotate(-2deg);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.15) rotate(2deg);
+        opacity: 0.6;
+    }
+    75% {
+        transform: scale(1.1) rotate(-2deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.input-area {
+    display: flex;
+    align-items: flex-end; /* Keeps buttons at the bottom as box grows */
+    padding: 10px;
+    background: #fff;
+}
+
+#userInput {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    outline: none;
+    resize: none; /* Prevents user from manual dragging */
+    font-family: inherit;
+    max-height: 80px; /* Limits height to roughly 3-4 rows */
+    line-height: 20px;
+    overflow-y: auto; /* Adds scrollbar after max-height */
+    transition: height 0.1s ease;
 }
