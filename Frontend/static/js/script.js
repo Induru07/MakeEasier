@@ -13,15 +13,21 @@ function toggleChat() {
 async function sendMessage() {
     const input = document.getElementById('userInput');
     const msgText = input.value.trim();
+    if (!msgText) return;
 
-    if (!msgText) return; // Don't send empty messages
-
-    // Add user's bubble to the screen
     appendMessage(msgText, 'user');
-    input.value = ''; // Clear input box
+    input.value = '';
+
+    // --- ADDED: Create a loading bubble ---
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'msg bot loading-bubble';
+    loadingDiv.innerText = "Mia is thinking...";
+    document.getElementById('messages').appendChild(loadingDiv);
+    // Yield one frame so the browser can paint the loading bubble
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    // --------------------------------------
 
     try {
-        // Send the message to our Node.js Backend
         const response = await fetch('/api/bookings/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -30,12 +36,15 @@ async function sendMessage() {
 
         const data = await response.json();
         
-        // Add the AI's bubble to the screen
+        // --- ADDED: Remove loading bubble before showing answer ---
+        loadingDiv.remove();
+        // ---------------------------------------------------------
+        
         appendMessage(data.response, 'bot');
 
     } catch (error) {
+        loadingDiv.remove(); // Remove even if there is an error
         appendMessage("Error: The salon server is sleeping.", "bot");
-        console.error("Fetch error:", error);
     }
 }
 
